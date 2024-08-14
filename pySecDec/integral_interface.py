@@ -1626,6 +1626,16 @@ class DistevalLibrary(object):
         string;
         The format of the returned result, ``"sympy"``,
         ``"mathematica"``, or ``"json"``. Default: ``"sympy"``.
+    
+    :param initial_deformation_parameters:
+        dict, optional;
+        Specify the starting (maximum) values of the deformation parameters for
+        any number of the sector integrals (unspecified sectors use default
+        deformation parameters). Keys are tuples (<name>,<kernel>) where <name>
+        is the name of the integral and <kernel> is the name of the sector as
+        in the source directory "distrc/". Values are lists of deformation 
+        parameters, of the same length as the number of integration variables.
+        Default: ``{}``.
 
     The call operator returns a single string with the resulting
     value as a series in the regulator powers.
@@ -1663,7 +1673,8 @@ class DistevalLibrary(object):
             epsabs=1e-10, epsrel=1e-4, timeout=None, points=1e4,
             number_of_presamples=1e4, shifts=32,
             lattice_candidates=0, standard_lattices=False,
-            coefficients=None, verbose=None, format="sympy"):
+            coefficients=None, verbose=None, format="sympy",
+            initial_deformation_parameters={}):
         import asyncio
         import json
         import math
@@ -1703,7 +1714,7 @@ class DistevalLibrary(object):
             self.prepared, coefficients, epsabs, epsrel,
             int(number_of_presamples), int(points), int(shifts),
             lattice_candidates, standard_lattices,
-            valuemap_int, valuemap_coeff, deadline))
+            valuemap_int, valuemap_coeff, deadline, initial_deformation_parameters))
 
         if format == "raw":
             return result

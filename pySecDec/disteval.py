@@ -427,7 +427,7 @@ async def prepare_eval(workers, datadir, intfile):
         t1 - t0,
         t2 - t1)
 
-async def do_eval(prepared, coeffsdir, epsabs, epsrel, npresample, npoints0, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline):
+async def do_eval(prepared, coeffsdir, epsabs, epsrel, npresample, npoints0, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline, initial_deformation_parameters):
 
     datadir, info, requested_orders, kernel2idx, infos, ampcount, korders, family2idx, par, t_init, t_worker = prepared
 
@@ -552,22 +552,28 @@ async def do_eval(prepared, coeffsdir, epsabs, epsrel, npresample, npoints0, nsh
     else:
         raise ValueError(f"Incorrect size of the epsabs array given")
 
-    # Presample all kernels
-    kern_rng = [np.random.RandomState(0) for fam, ker in kernel2idx.keys()]
+    # Set starting (maximum) values for deformation parameters. Sample values
+    # for any non user-specified sectors
     t2 = time.time()
-    log("distributing presampling jobs")
+    kern_rng = [np.random.RandomState(None) for fam, ker in kernel2idx.keys()]
+    presample_kernel2idx = {k : i for k, i in kernel2idx.items() if k not in initial_deformation_parameters}
     results = []
-    for i, (fam, ker) in enumerate(kernel2idx.keys()):
+    for (fam, ker), idx in presample_kernel2idx.items():
         lattice, genvec = generating_vector(infos[fam]["dimension"], npresample)
-        f = par.call("maxdeformp", i+1, infos[fam]["deformp_count"],
-            lattice, genvec, kern_rng[i].rand(infos[fam]["dimension"]).tolist())
+        f = par.call("maxdeformp", idx+1, infos[fam]["deformp_count"],
+            lattice, genvec, kern_rng[idx].rand(infos[fam]["dimension"]).tolist())
         results.append(f)
-    log("waiting for the presampling results")
-    deformp = await asyncio.gather(*results)
-    deformp = [[min(max(x, 1e-6), 1.0) for x in defp] for defp in deformp]
+    presample_deformp = await asyncio.gather(*results)
+    presample_deformp = [[min(max(x, 1e-6), 1.0) for x in defp] for defp in presample_deformp]
+    deformp = []
+    for key in kernel2idx:
+        if key in initial_deformation_parameters:
+            deformp.append(initial_deformation_parameters[key])
+        else:
+            deformp.append(presample_deformp.pop(0))
     for i, d in enumerate(deformp):
         log(f"maxdeformp of k{i} is {d}")
-
+        
     # Integrate the weighted sum
     t3 = time.time()
 
@@ -1030,6 +1036,7 @@ def main():
     lattice_candidates = 0
     standard_lattices = False
     deadline = math.inf
+    initial_deformation_parameters = {}
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "", ["cluster=", "coefficients=", "epsabs=", "epsrel=", "format=", "points=", "presamples=", "shifts=", "lattice-candidates=", "standard-lattices=", "timeout=", "help"])
     except getopt.GetoptError as e:
@@ -1097,7 +1104,7 @@ def main():
     # Begin evaluation
     loop = asyncio.get_event_loop()
     prepared = loop.run_until_complete(prepare_eval(workers, dirname, intfile))
-    result = loop.run_until_complete(do_eval(prepared, coeffsdir, epsabs, epsrel, npresamples, npoints, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline))
+    result = loop.run_until_complete(do_eval(prepared, coeffsdir, epsabs, epsrel, npresamples, npoints, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline, initial_deformation_parameters))
 
     # Report the result
     if result_format == "json":
