@@ -40,7 +40,7 @@ if [ ! -f "$tmpdir/dist/$name.tar.gz" ]; then
 fi
 
 c mkdir -p dist
-c cp -ai "$tmpdir/dist/$name.tar.gz" dist/
+c cp -af "$tmpdir/dist/$name.tar.gz" dist/
 
 for tag in manylinux2010_x86_64 manylinux2014_x86_64 manylinux_2_24_x86_64 manylinux_2_28_x86_64; do
     image="$tag.sif"
@@ -70,7 +70,7 @@ for tag in manylinux2010_x86_64 manylinux2014_x86_64 manylinux_2_24_x86_64 manyl
     echo "### Building $tag"
     c singularity run -C \
         -B "$dir":/src \
-        -W "$TMP" \
+        -W "${TMPDIR:-/tmp}" \
         --pwd /src \
         "$image" \
         /opt/python/cp38-cp38/bin/python -m build .
@@ -84,7 +84,7 @@ for tag in manylinux2010_x86_64 manylinux2014_x86_64 manylinux_2_24_x86_64 manyl
     fi
 
     echo "The result is now at dist/$name-py3-none-$tag.whl"
-    c cp -ai "$bdist" "dist/$name-py3-none-$tag.whl"
+    c cp -af "$bdist" "dist/$name-py3-none-$tag.whl"
 
     echo "### Removing $dir"
     c rm -rf "$dir"
