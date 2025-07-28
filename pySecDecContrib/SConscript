@@ -140,7 +140,12 @@ contrib += env.Program("bin/pysecdec_listcuda", [f"disteval/listcuda.cpp"],
     CXXFLAGS="-std=c++14 -O3 -Wall",
     LIBS=["dl"],
     LINKFLAGS="-s")
-File("disteval/minicuda.h")
+
+contrib += [File("disteval/builtin.cpp")]
+contrib += [File("disteval/builtin.cu")]
+contrib += [File("disteval/common_cpu.h")]
+contrib += [File("disteval/common_cuda.h")]
+contrib += [File("disteval/minicuda.h")]
 
 contrib += [File("bin/export_sector")]
 contrib += [File("bin/formwrapper")]
