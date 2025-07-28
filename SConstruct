@@ -35,8 +35,15 @@
 import enscons
 import os
 import packaging.tags
+import SCons.Platform.posix
 import subprocess
 import toml
+
+# Make sure SCons passes all open file descriptors to subprocesses,
+# so that GNU Make Jobserver would work.
+def exec_subprocess_noclosefd(cmd, env):
+    return subprocess.Popen(cmd, env=env, close_fds=False).wait()
+SCons.Platform.posix.exec_subprocess = exec_subprocess_noclosefd
 
 def get_universal_platform_tag():
     """Return the wheel tag for universal Python 3, but specific platform."""

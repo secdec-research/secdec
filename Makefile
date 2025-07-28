@@ -80,7 +80,7 @@ dependencies:
 
 .PHONY: build
 build:
-	$(PYTHON) -m SCons build -j2
+	+$(PYTHON) -m SCons build
 
 .PHONY : check
 check : check3 doctest util-check
@@ -139,7 +139,7 @@ high-level :
 
 .PHONY : dist
 dist : build
-	$(PYTHON) -m SCons dist
+	+$(PYTHON) -m SCons dist
 
 .SILENT .PHONY : show-todos
 grep_cmd  = grep -riG [^"au""sphinx.ext."]todo --color=auto --exclude=Makefile --exclude-dir=.git --exclude=catch.hpp
