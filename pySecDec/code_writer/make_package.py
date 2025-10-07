@@ -1113,8 +1113,12 @@ def _process_secondary_sector(environment):
     # use the derivative tracking dummy functions for the polynomials --> faster
     # don't use symbolic names for constant factors in the cal_I --> derivatives of cal_I much shorter
     def is_constant(poly):
-        if isinstance(poly,Polynomial) and not np.any(poly.expolist):
-            return True
+        if not isinstance(poly,_Expression):
+            return  True
+        if isinstance(poly,Product):
+            return all(map(is_constant,poly.factors))
+        if isinstance(poly,Polynomial):
+            return not np.any(poly.expolist) and all(map(is_constant,poly.coeffs))
         return False
     nontrivial_symbolic_polynomials_to_decompose = [poly.factors[1] if is_constant(poly.factors[1]) else symbolic_poly for symbolic_poly,poly in zip(symbolic_polynomials_to_decompose,sector.cast)]
     nontrivial_symbolic_other_polynomials = [poly.factors[1] if is_constant(poly.factors[1]) else symbolic_poly for symbolic_poly,poly in zip(symbolic_other_polynomials,sector.other)]
