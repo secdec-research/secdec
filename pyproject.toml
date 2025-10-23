@@ -1,5 +1,5 @@
 [project]
-name = "pySecDec"
+name = "pysecdec"
 version = "1.6.6"
 
 author = "Sophia Borowka, Bakar Chargeishvili, Gudrun Heinrich, Stephan Jahn, Stephen Jones, Matthias Kerner, Florian Langer, Vitaly Magerya, Anton Olsson, Andres Poldaru, Johannes Schlenk, Emilio Villa, Tom Zirke"
