@@ -63,7 +63,7 @@ contrib += \
                 -e 's/puts(s)/fputs(s,stderr); putc(10,stderr)/' \
                 -e 's/stdout/stderr/g' src/common/stddecl.h && \
         """,
-        extra_configure_args="CFLAGS='-O3 -fno-omit-frame-pointer -ffast-math -fno-finite-math-only -fexceptions -fcommon -fPIC'",
+        extra_configure_args="CFLAGS='-std=c11 -O3 -fno-omit-frame-pointer -ffast-math -fno-finite-math-only -fexceptions -fcommon -fPIC'",
         build_target="lib")
 
 zlib_files = ["lib/libz.a", "include/zlib.h", "include/zconf.h"]
@@ -79,7 +79,7 @@ contrib += \
 gmp_files = open(f"{gmp}.list").read().splitlines()
 contrib += \
     ConfigureAndInstall(env, gmp_files, gmp, extension=".tar.bz2",
-        pre_commands="mv config.guess config.guess.orig && ln -sf configfsf.guess config.guess && ",
+        pre_commands=f"patch -p0 <../{gmp}.patch && mv config.guess config.guess.orig && ln -sf configfsf.guess config.guess && ",
         extra_configure_args="--enable-cxx --enable-fat --disable-shared --enable-static --with-pic --exec-prefix=\"$$PWD/..\"")
 
 gsl_files = open(f"{gsl}.list").read().splitlines()
