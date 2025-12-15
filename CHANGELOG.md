@@ -5,7 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A way to specify per-sector initial deformation parameters in *disteval*: `initial_deformation_parameters` parameter of the `__call__` to `DistevalLibrary`.
+
+### Fixed
+- Cuba and GMP build with GCC 15.
+
 ## [1.6.6] - 2025-10-23
+
 ### Fixed
 - fixed a bug in the contour deformations encountered in some integrals with numerator
 - `make -jN build` now works in parallel
