@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A way to specify per-sector initial deformation parameters in *disteval*: `initial_deformation_parameters` parameter of the `__call__` to `DistevalLibrary`.
 
+### Changed
+- [Nauty and Traces](https://pallini.di.uniroma1.it) updated to 2.9.1.
+
 ### Fixed
 - Cuba and GMP build with GCC 15.
 
