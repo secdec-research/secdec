@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Nauty and Traces](https://pallini.di.uniroma1.it) updated to 2.9.1.
+- [FORM](https://github.com/form-dev/form) updated to 5.0.0.
 
 ### Fixed
 - Cuba and GMP build with GCC 15.

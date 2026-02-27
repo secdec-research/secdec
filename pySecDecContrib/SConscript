@@ -4,7 +4,7 @@ Import("env")
 
 cuba = "Cuba-4.2.2p1"
 zlib = "zlib-1.3.1"
-form = "form-4.3.1"
+form = "form-5.0.0"
 gmp = "gmp-6.3.0"
 gsl = "gsl-2.8"
 nauty = "nauty2_9_1"
@@ -74,7 +74,7 @@ form_files = ["bin/form", "bin/tform"]
 contrib += \
     ConfigureAndInstall(env, form_files, form,
         extra_sources = zlib_files,
-        extra_configure_args="--without-gmp --with-zlib --enable-native=no")
+        extra_configure_args="--without-gmp --disable-float --with-zlib --enable-native=no")
 
 gmp_files = open(f"{gmp}.list").read().splitlines()
 contrib += \
