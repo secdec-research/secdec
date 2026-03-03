@@ -1,9 +1,8 @@
 Bootstrap: docker
-From: ubuntu:20.04
+From: ubuntu:24.04
 
 %post
-    chmod 777 /tmp
     cat /etc/apt/sources.list | sed -e 's/main$/universe/' > /etc/apt/sources.list.d/universe.list
     env DEBIAN_FRONTEND=noninteractive apt-get -y update
-    env DEBIAN_FRONTEND=noninteractive apt-get -y install python3 python3-pip graphviz normaliz nauty libgsl-dev daemon git autoconf
+    env DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential graphviz normaliz nauty libgsl-dev daemon git autoconf gcc python3 python3-pip
     env DEBIAN_FRONTEND=noninteractive apt-get -y clean
