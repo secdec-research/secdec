@@ -4,7 +4,11 @@ github test runner.
 
 To use these scripts:
 
-1. Run ./build.sh to build baseimage.sif.
+1. You will require subuid and subgid enabled
+   (/etc/subuid and /etc/subgid - USERNAME:ID:COUNT e.g. myuser:10000:5000)
+   for root-less build.
+
+1. Run ./build.sh to build baseimage.sif. or sudo ./build.sh if you dont have sub*ids
 
    Note that sudo is used here, but nowhere else.
 
