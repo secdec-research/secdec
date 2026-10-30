@@ -1115,9 +1115,14 @@ def main():
         exit(1)
 
     # Begin evaluation
-    loop = asyncio.get_event_loop()
-    prepared = loop.run_until_complete(prepare_eval(workers, dirname, intfile))
-    result = loop.run_until_complete(do_eval(prepared, coeffsdir, epsabs, epsrel, npresamples, npoints, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline, initial_deformation_parameters))
+    async def evaluate():
+        prepared = await prepare_eval(workers, dirname, intfile)
+        try:
+            return await do_eval(prepared, coeffsdir, epsabs, epsrel, npresamples, npoints, nshifts, lattice_candidates, standard_lattices, valuemap_int, valuemap_coeff, deadline, initial_deformation_parameters)
+        finally:
+            await clear_eval(prepared)
+
+    result = asyncio.run(evaluate())
 
     # Report the result
     if result_format == "json":
@@ -1137,8 +1142,6 @@ def main():
     else:
         print(result_to_sympy(result))
     sys.stdout.flush()
-
-    loop.run_until_complete(clear_eval(prepared))
 
 if __name__ == "__main__":
     main()
