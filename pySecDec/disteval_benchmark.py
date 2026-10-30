@@ -299,8 +299,7 @@ def main():
         worker = ["nice", sys.executable, "-m", "pySecDecContrib", "pysecdec_cpuworker"]
 
     # Run the benchmark
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(dobenchmark(worker, dirname, intfile, valuemap, npoints, nreps))
+    asyncio.run(dobenchmark(worker, dirname, intfile, valuemap, npoints, nreps))
 
 if __name__ == "__main__":
     main()
